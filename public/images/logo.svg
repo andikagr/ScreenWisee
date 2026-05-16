@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <!-- Phone body -->
+  <rect x="55" y="25" width="90" height="155" rx="16" stroke="#2E8B9A" stroke-width="8" fill="none"/>
+  <!-- Phone screen -->
+  <rect x="65" y="50" width="70" height="100" rx="4" fill="#2E8B9A" opacity="0.1"/>
+  <!-- Phone home button -->
+  <circle cx="100" cy="165" r="6" fill="#2E8B9A" opacity="0.4"/>
+  <!-- Phone speaker -->
+  <rect x="88" y="35" width="24" height="4" rx="2" fill="#2E8B9A" opacity="0.4"/>
+  <!-- Leaf -->
+  <path d="M130 85 C130 45, 170 30, 170 30 C170 30, 155 70, 130 85 Z" fill="#7BC144"/>
+  <path d="M130 85 C145 65, 160 45, 170 30" stroke="#5EA030" stroke-width="2" fill="none"/>
+  <!-- Small leaf vein -->
+  <path d="M140 72 C145 65, 150 58, 155 50" stroke="#5EA030" stroke-width="1.5" fill="none" opacity="0.6"/>
+  <!-- Stem curve -->
+  <path d="M100 130 C100 110, 115 95, 130 85" stroke="#7BC144" stroke-width="4" fill="none" stroke-linecap="round"/>
+</svg>
