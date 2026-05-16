@@ -64,3 +64,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     Route::get('/reports/pdf', [ReportController::class, 'exportPdf'])->name('reports.pdf');
 });
+
+// Route khusus untuk menjalankan migration di production (Vercel)
+Route::get('/migrate-db-sekarang', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        return '<h1>✅ MIGRATION SUKSES!</h1><pre>' . \Illuminate\Support\Facades\Artisan::output() . '</pre>';
+    } catch (\Exception $e) {
+        return '<h1>❌ MIGRATION GAGAL!</h1><pre>' . $e->getMessage() . '</pre>';
+    }
+});
