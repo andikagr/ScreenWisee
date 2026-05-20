@@ -91,6 +91,32 @@
                 flex-wrap: wrap;
             }
         }
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 16px 20px !important;
+                flex-direction: column !important;
+                gap: 16px;
+                background: rgba(255, 255, 255, 0.9);
+                backdrop-filter: blur(10px);
+                border-bottom: 1px solid rgba(0,0,0,0.05);
+            }
+            .nav-buttons {
+                width: 100%;
+                justify-content: center !important;
+                display: flex !important;
+                gap: 8px !important;
+            }
+            .nav-buttons .btn {
+                flex: 1;
+                text-align: center;
+                padding: 10px 12px !important;
+                font-size: 13px !important;
+                white-space: nowrap;
+            }
+            .hero-layout {
+                padding-top: 160px !important;
+            }
+        }
     </style>
 
     <div class="grid-bg"
@@ -104,7 +130,7 @@
             style="position: absolute; bottom: -20%; right: -10%; width: 60vw; height: 60vw; border-radius: 50%; background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, rgba(255,255,255,0) 70%); z-index: 0;">
         </div>
 
-        <nav
+        <nav class="nav-container"
             style="position: absolute; top: 0; left: 0; right: 0; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 50;">
             <div style="display: flex; align-items: center; gap: 12px;">
                 <div
@@ -114,7 +140,7 @@
                 </div>
                 <span style="font-size: 24px; font-weight: 800; color: #1e293b; letter-spacing: -0.5px;">ScreenWise</span>
             </div>
-            <div>
+            <div class="nav-buttons" style="display: flex; gap: 12px; align-items: center;">
                 @auth
                     @if(auth()->user()->isSiswa())
                         <a href="{{ route('siswa.dashboard') }}" class="btn modern-btn"
@@ -128,7 +154,7 @@
                     @endif
                 @else
                     <a href="{{ route('login') }}" class="btn"
-                        style="background: white; color: #0c7518ff; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.02); margin-right: 12px; padding: 12px 24px; border-radius: 12px; font-weight: 700;">Masuk</a>
+                        style="background: white; color: #0c7518ff; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.02); padding: 12px 24px; border-radius: 12px; font-weight: 700;">Masuk</a>
                     <a href="{{ route('register') }}" class="btn modern-btn"
                         style="padding: 12px 24px; border-radius: 12px; font-weight: 700;">Daftar Sekarang</a>
                 @endauth

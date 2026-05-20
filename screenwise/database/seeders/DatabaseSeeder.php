@@ -24,14 +24,14 @@ class DatabaseSeeder extends Seeder
 
         // Guru
         $guru1 = User::create([
-            'name' => 'Ibu Sri Wahyuni',
+            'name' => 'guru1',
             'email' => 'guru1@screenwise.com',
             'password' => Hash::make('password'),
             'role' => 'guru',
         ]);
 
         $guru2 = User::create([
-            'name' => 'Pak Budi Santoso',
+            'name' => 'guru2',
             'email' => 'guru2@screenwise.com',
             'password' => Hash::make('password'),
             'role' => 'guru',

@@ -57,13 +57,13 @@
                         <td>
                             <div class="btn-group" style="gap:8px">
                                 @if($u->role === 'siswa')
-                                <a href="{{ route('admin.users.show', $u) }}" class="btn btn-sm" style="background:var(--accent-yellow);color:var(--dark-800);border:none">👁️ Detail</a>
+                                <a href="{{ route('admin.users.show', $u) }}" class="btn btn-sm" style="background:var(--accent-yellow);color:var(--dark-800);border:none;display:inline-flex;align-items:center;gap:4px;"><i data-lucide="eye" style="width:14px;height:14px;"></i> Detail</a>
                                 @endif
-                                <a href="{{ route('admin.users.edit', $u) }}" class="btn btn-sm" style="background:var(--primary-100);color:var(--primary-700);border:none">✏️ Edit{{ $noGuru ? ' (Assign Guru!)' : '' }}</a>
+                                <a href="{{ route('admin.users.edit', $u) }}" class="btn btn-sm" style="background:var(--primary-100);color:var(--primary-700);border:none;display:inline-flex;align-items:center;gap:4px;"><i data-lucide="edit-2" style="width:14px;height:14px;"></i> Edit{{ $noGuru ? ' (Assign Guru!)' : '' }}</a>
                                 @if($u->id !== auth()->id())
                                 <form method="POST" action="{{ route('admin.users.destroy', $u) }}" onsubmit="return confirm('Hapus user ini?')">
                                     @csrf @method('DELETE')
-                                    <button class="btn btn-sm" style="background:var(--danger);color:white;border:none">🗑️ Hapus</button>
+                                    <button class="btn btn-sm" style="background:var(--danger);color:white;border:none;display:inline-flex;align-items:center;gap:4px;"><i data-lucide="trash-2" style="width:14px;height:14px;"></i> Hapus</button>
                                 </form>
                                 @endif
                             </div>

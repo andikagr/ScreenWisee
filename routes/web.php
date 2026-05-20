@@ -11,6 +11,15 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ChallengeController;
 use App\Http\Controllers\Admin\ReportController;
 
+Route::get('/db-test', function () {
+    try {
+        DB::connection()->getPdo();
+        return 'DB Connected Successfully!';
+    } catch (\Exception $e) {
+        return 'DB Connection Failed: ' . $e->getMessage();
+    }
+});
+
 Route::get('/', function () {
     if (auth()->check()) {
         $user = auth()->user();

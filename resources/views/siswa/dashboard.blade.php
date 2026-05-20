@@ -104,7 +104,7 @@
 </div>
 @endif
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px">
+<div class="dashboard-grid-2">
     {{-- Status Hari Ini --}}
     <div class="card fade-up">
         <div class="card-header"><h3 class="text-primary" style="display:flex;align-items:center;gap:8px;"><i data-lucide="pin" style="width:20px;height:20px;"></i> Hari Ini</h3></div>

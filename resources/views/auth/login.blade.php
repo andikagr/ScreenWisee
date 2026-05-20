@@ -50,7 +50,12 @@
     
     @media (max-width: 992px) {
         .login-left { display: none; }
-        .login-right { background: #c0d8c2ff; }
+        .login-right { background: #c0d8c2ff; padding: 24px; }
+    }
+    
+    @media (max-width: 480px) {
+        .login-right { padding: 16px; }
+        .auth-card-modern { padding: 24px; border-radius: 20px; }
     }
     
     @keyframes float1 {
@@ -90,10 +95,12 @@
         <div style="position: absolute; top: 15%; right: 15%; opacity: 0.5; animation: float1 4s ease-in-out infinite; color: var(--primary);"><i data-lucide="rocket" style="width:48px;height:48px;"></i></div>
         <div style="position: absolute; bottom: 15%; left: 15%; opacity: 0.5; animation: float2 5s ease-in-out infinite; color: var(--primary);"><i data-lucide="sparkles" style="width:40px;height:40px;"></i></div>
 
-        <a href="{{ route('home') }}" style="position: absolute; top: 40px; left: 40px; display: flex; align-items: center; gap: 8px; color: #64748b; text-decoration: none; font-weight: 600; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='#06900dff'" onmouseout="this.style.color='#64748b'">
-            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M15 19l-7-7 7-7"></path></svg>
-            Kembali ke Beranda
-        </a>
+        <div style="width: 100%; max-width: 420px; margin-bottom: 24px; z-index: 20; position: relative;">
+            <a href="{{ route('home') }}" style="display: inline-flex; align-items: center; gap: 8px; color: #64748b; text-decoration: none; font-weight: 600; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='#06900dff'" onmouseout="this.style.color='#64748b'">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M15 19l-7-7 7-7"></path></svg>
+                Kembali ke Beranda
+            </a>
+        </div>
 
         <div class="auth-card-modern fade-up" style="animation-delay: 0.1s;">
             <div style="text-align: center; margin-bottom: 32px;">
@@ -143,29 +150,6 @@
                 </button>
             </form>
 
-            {{-- Divider --}}
-            <div style="display: flex; align-items: center; gap: 12px; margin: 4px 0 20px;">
-                <div style="flex: 1; height: 1px; background: #e2e8f0;"></div>
-                <span style="font-size: 13px; font-weight: 700; color: #94a3b8;">atau</span>
-                <div style="flex: 1; height: 1px; background: #e2e8f0;"></div>
-            </div>
-
-            {{-- Google Login Button --}}
-            <a href="{{ route('google.login') }}"
-               id="btn-google-login"
-               style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 16px; background: white; border: 2px solid #e2e8f0; border-radius: 14px; font-size: 14px; font-weight: 800; color: #1e293b; text-decoration: none; transition: all 0.2s; box-sizing: border-box; margin-bottom: 8px;"
-               onmouseover="this.style.borderColor='#4285F4'; this.style.boxShadow='0 4px 16px rgba(66,133,244,0.15)'; this.style.background='#f8faff';"
-               onmouseout="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'; this.style.background='white';">
-                {{-- Google SVG Logo --}}
-                <svg width="20" height="20" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                    <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-                    <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-                    <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-                    <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-                    <path fill="none" d="M0 0h48v48H0z"/>
-                </svg>
-                Masuk dengan Google
-            </a>
 
             <div style="text-align: center; margin-top: 24px; padding-top: 24px; border-top: 1px solid #e2e8f0;">
                 <p style="font-size: 14px; color: #64748b; font-weight: 600;">

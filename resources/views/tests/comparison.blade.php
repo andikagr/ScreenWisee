@@ -29,7 +29,7 @@
     </div>
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:32px">
+<div class="dashboard-grid-2">
     <div class="card fade-up">
         <div class="card-header"><h3 style="color:var(--text);font-size:20px;display:flex;align-items:center;gap:8px;"><i data-lucide="bar-chart-2"></i> Bukti Keberhasilanmu!</h3></div>
         <div class="card-body">

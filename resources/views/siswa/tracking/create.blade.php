@@ -116,7 +116,7 @@
                     <li>Upload <strong>1 screenshot</strong> sebagai bukti aktivitas digital kamu hari ini</li>
                     <li>Bisa screenshot dari screen time HP (pengaturan → screen time), atau bukti kamu selesaikan salah satu tantangan</li>
                     <li>Contoh: screenshot layar screen time dari iPhone/Android, atau foto kondisi kamu detoks digital</li>
-                    <li>Upload bersifat opsional, tapi membantu guru memverifikasi progressmu <i data-lucide="bar-chart-2" style="width:14px;height:14px;display:inline-block;vertical-align:-2px;"></i></li>
+                    <li>Upload bersifat <strong style="color:#b91c1c">wajib</strong> — kamu tidak bisa simpan jurnal tanpa upload bukti terlebih dahulu <i data-lucide="bar-chart-2" style="width:14px;height:14px;display:inline-block;vertical-align:-2px;"></i></li>
                 </ul>
             </div>
             <div class="file-upload" id="dropZone" onclick="document.getElementById('screenshotInput').click()" style="border-color:var(--accent-pink); border-width:4px">
@@ -131,8 +131,15 @@
     </div>
 
     <div class="btn-group" style="margin-top:16px; display:flex; gap:16px">
-        <button type="submit" class="btn btn-lg" id="submitBtn" style="flex:2; background:var(--primary-500); color:white; justify-content:center; box-shadow:0 8px 0 var(--primary-700);display:flex;align-items:center;gap:8px;"><i data-lucide="save" style="width:20px;height:20px;"></i> Simpan Jurnalnya!</button>
-        <a href="{{ route('siswa.dashboard') }}" class="btn btn-secondary btn-lg" style="flex:1; justify-content:center; box-shadow:0 8px 0 var(--dark-300)">Batal</a>
+        <button type="submit" class="btn btn-lg" id="submitBtn" disabled
+            style="flex:2; background:var(--dark-300); color:var(--dark-500); justify-content:center; box-shadow:0 8px 0 var(--dark-200); display:flex; align-items:center; gap:8px; cursor:not-allowed; opacity:0.6; transition: all 0.3s ease;"
+            title="Upload bukti screenshot terlebih dahulu!">
+            <i data-lucide="image" style="width:20px;height:20px;"></i> Upload Screenshot Dulu!
+        </button>
+        <a href="{{ route('siswa.dashboard') }}" class="btn btn-secondary btn-lg" style="flex:1; justify-content:center; box-shadow:0 8px 0 var(--border-strong)">Batal</a>
+    </div>
+    <div id="screenshotReminder" style="text-align:center; margin-top:12px; font-size:14px; font-weight:700; color:#b91c1c; display:flex; align-items:center; justify-content:center; gap:6px;">
+        <i data-lucide="alert-circle" style="width:16px;height:16px;"></i> Wajib upload bukti screenshot sebelum bisa simpan jurnal!
     </div>
 </form>
 
@@ -195,34 +202,98 @@ const input = document.getElementById('screenshotInput');
 const preview = document.getElementById('filePreview');
 const dropZone = document.getElementById('dropZone');
 const fileError = document.getElementById('fileError');
+const submitBtn = document.getElementById('submitBtn');
+const screenshotReminder = document.getElementById('screenshotReminder');
+let hasValidScreenshot = false;
+
+function setSubmitEnabled(enabled) {
+    hasValidScreenshot = enabled;
+    if (enabled) {
+        submitBtn.disabled = false;
+        submitBtn.style.background = 'var(--primary)';
+        submitBtn.style.color = 'white';
+        submitBtn.style.boxShadow = '0 8px 0 var(--primary-dark)';
+        submitBtn.style.cursor = 'pointer';
+        submitBtn.style.opacity = '1';
+        submitBtn.title = '';
+        submitBtn.innerHTML = '<i data-lucide="save" style="width:20px;height:20px;"></i> Simpan Jurnalnya!';
+        screenshotReminder.style.display = 'none';
+        if (window.lucide) lucide.createIcons();
+    } else {
+        submitBtn.disabled = true;
+        submitBtn.style.background = 'var(--dark-300)';
+        submitBtn.style.color = 'var(--dark-500)';
+        submitBtn.style.boxShadow = '0 8px 0 var(--dark-200)';
+        submitBtn.style.cursor = 'not-allowed';
+        submitBtn.style.opacity = '0.6';
+        submitBtn.title = 'Upload bukti screenshot terlebih dahulu!';
+        submitBtn.innerHTML = '<i data-lucide="image" style="width:20px;height:20px;"></i> Upload Screenshot Dulu!';
+        screenshotReminder.style.display = 'flex';
+        if (window.lucide) lucide.createIcons();
+    }
+}
 
 function validateFile(file) {
     if (!['image/jpeg','image/png'].includes(file.type)) {
         fileError.textContent = 'Format tidak valid. Gunakan JPG atau PNG.';
-        fileError.style.display = 'block'; return false;
+        fileError.style.display = 'block';
+        setSubmitEnabled(false);
+        return false;
     }
     if (file.size > 2 * 1024 * 1024) {
         fileError.textContent = 'File terlalu besar. Maksimal 2MB.';
-        fileError.style.display = 'block'; return false;
+        fileError.style.display = 'block';
+        setSubmitEnabled(false);
+        return false;
     }
-    fileError.style.display = 'none'; return true;
+    fileError.style.display = 'none';
+    return true;
 }
 
 function showPreview(file) {
     if (!validateFile(file)) { preview.innerHTML = ''; return; }
     const reader = new FileReader();
-    reader.onload = e => { preview.innerHTML = '<img src="' + e.target.result + '" alt="Preview"><p style="font-size:12px;color:var(--primary-600);margin-top:6px">' + file.name + ' (' + (file.size/1024).toFixed(0) + 'KB)</p>'; };
+    reader.onload = e => {
+        preview.innerHTML = '<img src="' + e.target.result + '" alt="Preview"><p style="font-size:12px;color:var(--primary-600);margin-top:6px">' + file.name + ' (' + (file.size/1024).toFixed(0) + 'KB)</p>';
+        setSubmitEnabled(true);
+    };
     reader.readAsDataURL(file);
 }
 
-input.addEventListener('change', function() { if (this.files[0]) showPreview(this.files[0]); });
+input.addEventListener('change', function() {
+    if (this.files[0]) {
+        showPreview(this.files[0]);
+    } else {
+        preview.innerHTML = '';
+        setSubmitEnabled(false);
+    }
+});
 dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
 dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
-dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('dragover'); if (e.dataTransfer.files[0]) { input.files = e.dataTransfer.files; showPreview(e.dataTransfer.files[0]); } });
+dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    if (e.dataTransfer.files[0]) {
+        input.files = e.dataTransfer.files;
+        showPreview(e.dataTransfer.files[0]);
+    }
+});
 
 // Form validation
 document.getElementById('trackingForm').addEventListener('submit', function(e) {
     let valid = true;
+
+    // Validasi screenshot wajib
+    if (!hasValidScreenshot || !input.files[0]) {
+        fileError.textContent = 'Wajib upload bukti screenshot sebelum menyimpan jurnal!';
+        fileError.style.display = 'block';
+        e.preventDefault();
+        dropZone.scrollIntoView({behavior: 'smooth', block: 'center'});
+        dropZone.style.borderColor = '#b91c1c';
+        setTimeout(() => { dropZone.style.borderColor = 'var(--accent-pink)'; }, 2000);
+        return;
+    }
+
     const st = parseFloat(totalInput.value);
     if (isNaN(st) || st < 0 || st > 24) {
         screenTimeError.textContent = 'Masukkan screen time antara 0-24 jam.';
@@ -237,7 +308,10 @@ document.getElementById('trackingForm').addEventListener('submit', function(e) {
     }
 
     if (!valid) { e.preventDefault(); window.scrollTo({top:0,behavior:'smooth'}); }
-    else { document.getElementById('submitBtn').textContent = '⏳ Menyimpan...'; document.getElementById('submitBtn').disabled = true; }
+    else {
+        submitBtn.innerHTML = '⏳ Menyimpan...';
+        submitBtn.disabled = true;
+    }
 });
 </script>
 @endpush

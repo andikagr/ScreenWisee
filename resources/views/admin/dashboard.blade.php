@@ -10,7 +10,7 @@
     <div class="stat-card fade-up" style="animation-delay:0.3s"><div class="stat-icon red pulse-ring"><i data-lucide="alert-triangle"></i></div><div class="stat-value">{{ $siswaNotTrackedToday }}</div><div class="stat-label">Belum Ngisi Jurnal</div></div>
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:32px">
+<div class="dashboard-grid-2">
     <div class="card fade-up">
         <div class="card-header"><h3 style="color:var(--primary-600);font-size:18px;display:flex;align-items:center;gap:8px;"><i data-lucide="trending-up" style="width:20px;height:20px;"></i> Trend Waktu Main HP Seminggu</h3></div>
         <div class="card-body"><div class="chart-container"><canvas id="weeklyChart"></canvas></div></div>
@@ -21,7 +21,7 @@
     </div>
 </div>
 
-<div class="stats-grid" style="grid-template-columns:1fr 1fr">
+<div class="stats-grid">
     <div class="card fade-up" style="border:4px solid var(--accent-yellow)">
         <div class="card-header" style="background:var(--accent-yellow);border-bottom:none"><h3 style="color:var(--dark-900);font-size:20px;display:flex;align-items:center;gap:8px;"><i data-lucide="list" style="width:24px;height:24px;"></i> Ringkasan Aplikasi</h3></div>
         <div class="card-body">

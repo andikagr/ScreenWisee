@@ -1,6 +1,7 @@
 {
     "version": 2,
     "framework": null,
+    "outputDirectory": "public",
     "functions": {
         "api/index.php": {
             "runtime": "vercel-php@0.7.2"
@@ -18,8 +19,9 @@
     ],
     "env": {
         "APP_ENV": "production",
-        "APP_DEBUG": "false",
-        "APP_URL": "https://screenwise.vercel.app",
+        "APP_DEBUG": "true",
+        "MAIL_MAILER": "log",
+        "APP_URL": "https://screenwise-app.vercel.app",
         "APP_CONFIG_CACHE": "/tmp/config.php",
         "APP_EVENTS_CACHE": "/tmp/events.php",
         "APP_PACKAGES_CACHE": "/tmp/packages.php",
@@ -31,18 +33,9 @@
         "SESSION_DRIVER": "cookie",
         "FILESYSTEM_DISK": "supabase",
         "DB_CONNECTION": "pgsql",
-        "DB_HOST": "db.amcjpmystwoioeymrxdr.supabase.co",
-        "DB_PORT": "5432",
+        "DB_HOST": "aws-1-ap-northeast-1.pooler.supabase.com",
+        "DB_PORT": "6543",
         "DB_DATABASE": "postgres",
-        "DB_USERNAME": "postgres",
-        "DB_PASSWORD": "@db_password",
-        "SUPABASE_STORAGE_ACCESS_KEY_ID": "fa6c71449c06ebe55b1e6f6a8f0b2ec6",
-        "SUPABASE_STORAGE_SECRET_ACCESS_KEY": "af5a8b32a8c8d0173690105d54c9301ab10182ede6f4d33130bcc80fd856b463",
-        "SUPABASE_STORAGE_REGION": "ap-northeast-1",
-        "SUPABASE_STORAGE_BUCKET": "profiles",
-        "SUPABASE_STORAGE_ENDPOINT": "https://amcjpmystwoioeymrxdr.supabase.co/storage/v1/s3",
-        "SUPABASE_STORAGE_URL": "https://amcjpmystwoioeymrxdr.supabase.co/storage/v1/s3",
-        "GOOGLE_CLIENT_ID": "@google_client_id",
-        "GOOGLE_CLIENT_SECRET": "@google_client_secret"
+        "DB_USERNAME": "postgres.amcjpmystwoioeymrxdr"
     }
 }

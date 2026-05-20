@@ -4,9 +4,9 @@
 @section('content')
 
 <div style="display:flex;justify-content:flex-end;margin-bottom:20px">
-    <a href="{{ route('admin.reports.pdf') }}" class="btn btn-primary">📥 Export PDF</a>
+    <a href="{{ route('admin.reports.pdf') }}" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:6px;"><i data-lucide="download" style="width:16px;height:16px;"></i> Export PDF</a>
 </div>
-<div class="stats-grid" style="grid-template-columns:1fr 1fr 1fr 1fr">
+<div class="stats-grid" style="grid-template-columns:repeat(auto-fit, minmax(180px, 1fr))">
     <div class="stat-card"><div class="stat-icon blue"><i data-lucide="users"></i></div><div class="stat-value">{{ $totalSiswa }}</div><div class="stat-label">Total Siswa</div></div>
     <div class="stat-card"><div class="stat-icon green"><i data-lucide="check-circle"></i></div><div class="stat-value">{{ $completedBoth }}</div><div class="stat-label">Lengkap Pre+Post</div></div>
     <div class="stat-card"><div class="stat-icon yellow"><i data-lucide="clipboard-list"></i></div><div class="stat-value">{{ round($avgPreScreenTime,1) }} jam</div><div class="stat-label">Avg Pre-Test</div></div>

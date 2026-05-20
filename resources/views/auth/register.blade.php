@@ -50,7 +50,12 @@
     
     @media (max-width: 992px) {
         .login-left { display: none; }
-        .login-right { background: #c0d8c2ff; }
+        .login-right { background: #c0d8c2ff; padding: 24px; }
+    }
+    
+    @media (max-width: 480px) {
+        .login-right { padding: 16px; }
+        .auth-card-modern { padding: 24px; border-radius: 20px; }
     }
     
     @keyframes float1 {
@@ -90,10 +95,12 @@
         <div style="position: absolute; top: 15%; right: 15%; opacity: 0.5; animation: float1 4s ease-in-out infinite; color: var(--primary);"><i data-lucide="party-popper" style="width:48px;height:48px;"></i></div>
         <div style="position: absolute; bottom: 15%; left: 15%; opacity: 0.5; animation: float2 5s ease-in-out infinite; color: var(--primary);"><i data-lucide="award" style="width:48px;height:48px;"></i></div>
 
-        <a href="{{ route('home') }}" style="position: absolute; top: 40px; left: 40px; display: flex; align-items: center; gap: 8px; color: #64748b; text-decoration: none; font-weight: 600; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='#06900d'" onmouseout="this.style.color='#64748b'">
-            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M15 19l-7-7 7-7"></path></svg>
-            Kembali ke Beranda
-        </a>
+        <div style="width: 100%; max-width: 480px; margin-bottom: 24px; z-index: 20; position: relative;">
+            <a href="{{ route('home') }}" style="display: inline-flex; align-items: center; gap: 8px; color: #64748b; text-decoration: none; font-weight: 600; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='#06900d'" onmouseout="this.style.color='#64748b'">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M15 19l-7-7 7-7"></path></svg>
+                Kembali ke Beranda
+            </a>
+        </div>
 
         <div class="auth-card-modern fade-up" style="animation-delay: 0.1s;">
             <div style="text-align: center; margin-bottom: 24px;">
