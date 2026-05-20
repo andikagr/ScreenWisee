@@ -22,12 +22,23 @@ class TrackingController extends Controller
             ->whereDate('tracking_date', $today)
             ->first();
 
-        // Hanya tampilkan challenge HARI INI saja
-        // Cari berdasarkan challenge_date, fallback ke day_number (0=Minggu, sesuaikan ke 1-7)
+        // Hitung hari program berdasarkan tracking pertama user (bukan hari dalam seminggu)
+        $firstTracking = DailyTracking::where('user_id', $user->id)
+            ->orderBy('tracking_date')
+            ->first();
+        $programDay = $firstTracking
+            ? Carbon::parse($firstTracking->tracking_date)->startOfDay()->diffInDays($today) + 1
+            : 1;
+
+        // Cari challenge berdasarkan hari program user
         $todayChallenge = Challenge::whereDate('challenge_date', $today)->first();
         if (!$todayChallenge) {
-            $dayNumber = $today->dayOfWeekIso; // 1=Senin ... 7=Minggu
-            $todayChallenge = Challenge::where('day_number', $dayNumber)->first();
+            $todayChallenge = Challenge::where('day_number', $programDay)->first();
+            if (!$todayChallenge) {
+                $maxDay = Challenge::max('day_number') ?? 7;
+                $loopDay = (($programDay - 1) % $maxDay) + 1;
+                $todayChallenge = Challenge::where('day_number', $loopDay)->first();
+            }
         }
         // Wrap jadi collection agar view tetap bisa foreach
         $challenges = $todayChallenge ? collect([$todayChallenge]) : collect();
@@ -63,10 +74,22 @@ class TrackingController extends Controller
         }
 
         $challengeChecklist = [];
-        // Hanya simpan challenge hari ini
-        $today = Carbon::today();
-        $todayChallenge = Challenge::whereDate('challenge_date', $today)->first()
-            ?? Challenge::where('day_number', $today->dayOfWeekIso)->first();
+        // Hitung hari program berdasarkan tracking pertama user
+        $firstTracking = DailyTracking::where('user_id', $user->id)
+            ->orderBy('tracking_date')
+            ->first();
+        $programDay = $firstTracking
+            ? Carbon::parse($firstTracking->tracking_date)->startOfDay()->diffInDays($today) + 1
+            : 1;
+        $todayChallenge = Challenge::whereDate('challenge_date', $today)->first();
+        if (!$todayChallenge) {
+            $todayChallenge = Challenge::where('day_number', $programDay)->first();
+            if (!$todayChallenge) {
+                $maxDay = Challenge::max('day_number') ?? 7;
+                $loopDay = (($programDay - 1) % $maxDay) + 1;
+                $todayChallenge = Challenge::where('day_number', $loopDay)->first();
+            }
+        }
         if ($todayChallenge) {
             $challengeChecklist[$todayChallenge->id] = in_array($todayChallenge->id, $request->challenge_checklist ?? []);
         }

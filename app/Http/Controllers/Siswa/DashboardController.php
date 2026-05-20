@@ -16,11 +16,24 @@ class DashboardController extends Controller
         $user = Auth::user();
         $today = Carbon::today();
 
-        // Challenge hari ini
+        // Hitung hari program berdasarkan tracking pertama user (bukan hari dalam seminggu)
+        $firstTracking = DailyTracking::where('user_id', $user->id)
+            ->orderBy('tracking_date')
+            ->first();
+        $programDay = $firstTracking
+            ? Carbon::parse($firstTracking->tracking_date)->startOfDay()->diffInDays($today) + 1
+            : 1;
+
+        // Challenge hari ini berdasarkan hari program user
         $todayChallenge = Challenge::whereDate('challenge_date', $today)->first();
         if (!$todayChallenge) {
-            $dayNumber = Carbon::now()->dayOfWeek ?: 1;
-            $todayChallenge = Challenge::where('day_number', $dayNumber)->first();
+            $todayChallenge = Challenge::where('day_number', $programDay)->first();
+            // Jika hari program melebihi jumlah challenge, loop dari awal
+            if (!$todayChallenge) {
+                $maxDay = Challenge::max('day_number') ?? 7;
+                $loopDay = (($programDay - 1) % $maxDay) + 1;
+                $todayChallenge = Challenge::where('day_number', $loopDay)->first();
+            }
         }
 
         // Tracking hari ini
@@ -105,7 +118,7 @@ class DashboardController extends Controller
         return view('siswa.dashboard', compact(
             'user', 'todayChallenge', 'todayTracking', 'weeklyTrackings',
             'totalTrackings', 'avgScreenTime', 'hasPretest', 'hasPosttest', 'challenges',
-            'streak', 'points', 'badges', 'notifications', 'showOnboarding'
+            'streak', 'points', 'badges', 'notifications', 'showOnboarding', 'programDay'
         ));
     }
 }

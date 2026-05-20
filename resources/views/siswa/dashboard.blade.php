@@ -51,7 +51,7 @@
 {{-- Challenge Hari Ini --}}
 @if($todayChallenge)
 <div class="challenge-card fade-up">
-    <div class="challenge-badge">Tantangan Hari ke-{{ $todayChallenge->day_number }}</div>
+    <div class="challenge-badge">Tantangan Hari ke-{{ $programDay }}</div>
     <h3 style="display:flex;align-items:center;gap:8px;"><i data-lucide="target" style="width:24px;height:24px;"></i> {{ $todayChallenge->title }}</h3>
     <p>{{ $todayChallenge->description }}</p>
 </div>
