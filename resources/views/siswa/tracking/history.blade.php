@@ -36,7 +36,7 @@
                         </td>
                         <td>
                             @if($t->screenshot_path)
-                                <a href="{{ asset('storage/' . $t->screenshot_path) }}" target="_blank" class="btn btn-sm bounce-anim" style="background:var(--accent-yellow);color:var(--dark-900);border:none;box-shadow:0 4px 0 var(--accent-yellow-dark);display:inline-flex;align-items:center;gap:6px;"><i data-lucide="camera" style="width:14px;height:14px;"></i> Lihat Foto</a>
+                                <a href="{{ Str::startsWith($t->screenshot_path, 'http') ? $t->screenshot_path : asset('storage/' . $t->screenshot_path) }}" target="_blank" class="btn btn-sm bounce-anim" style="background:var(--accent-yellow);color:var(--dark-900);border:none;box-shadow:0 4px 0 var(--accent-yellow-dark);display:inline-flex;align-items:center;gap:6px;"><i data-lucide="camera" style="width:14px;height:14px;"></i> Lihat Foto</a>
                             @else - @endif
                         </td>
                     </tr>

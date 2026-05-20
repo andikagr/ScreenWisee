@@ -87,7 +87,7 @@
             <div class="user-info">
                 @if(auth()->user()->profile_photo_path)
                     <div class="user-avatar" style="overflow: hidden; padding: 0;">
-                        <img src="{{ asset('storage/' . auth()->user()->profile_photo_path) }}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="{{ Str::startsWith(auth()->user()->profile_photo_path, 'http') ? auth()->user()->profile_photo_path : asset('storage/' . auth()->user()->profile_photo_path) }}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
                 @else
                     <div class="user-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>

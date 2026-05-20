@@ -37,8 +37,8 @@
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px">
             @foreach($recentScreenshots as $ss)
             <div style="border:3px solid var(--dark-100);border-radius:24px;overflow:hidden;transition:all .3s;background:white" class="screenshot-card">
-                <a href="{{ asset('storage/' . $ss->screenshot_path) }}" target="_blank">
-                    <img src="{{ asset('storage/' . $ss->screenshot_path) }}" alt="Screenshot" style="width:100%;height:140px;object-fit:cover;border-bottom:3px solid var(--dark-100)">
+                <a href="{{ Str::startsWith($ss->screenshot_path, 'http') ? $ss->screenshot_path : asset('storage/' . $ss->screenshot_path) }}" target="_blank">
+                    <img src="{{ Str::startsWith($ss->screenshot_path, 'http') ? $ss->screenshot_path : asset('storage/' . $ss->screenshot_path) }}" alt="Screenshot" style="width:100%;height:140px;object-fit:cover;border-bottom:3px solid var(--dark-100)">
                 </a>
                 <div style="padding:12px;text-align:center">
                     <div style="font-weight:900;font-size:14px;color:var(--primary-600)">{{ $ss->user->name }}</div>

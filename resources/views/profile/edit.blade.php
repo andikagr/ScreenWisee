@@ -18,7 +18,7 @@
         <div style="text-align: center; margin-bottom: 32px;">
             <div style="width: 150px; height: 150px; border-radius: 50%; background: var(--accent-purple); color: white; display: flex; align-items: center; justify-content: center; font-size: 64px; font-weight: 900; margin: 0 auto; overflow: hidden; border: 6px solid var(--primary-100); box-shadow: 0 8px 0 var(--dark-100);">
                 @if($user->profile_photo_path)
-                    <img src="{{ asset('storage/' . $user->profile_photo_path) }}" alt="Profile Photo" style="width: 100%; height: 100%; object-fit: cover;">
+                    <img src="{{ Str::startsWith($user->profile_photo_path, 'http') ? $user->profile_photo_path : asset('storage/' . $user->profile_photo_path) }}" alt="Profile Photo" style="width: 100%; height: 100%; object-fit: cover;">
                 @else
                     {{ strtoupper(substr($user->name, 0, 1)) }}
                 @endif

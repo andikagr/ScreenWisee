@@ -70,7 +70,14 @@ class TrackingController extends Controller
 
         $screenshotPath = null;
         if ($request->hasFile('screenshot')) {
-            $screenshotPath = $request->file('screenshot')->store('screenshots', 'public');
+            $disk = env('FILESYSTEM_DISK', 'public');
+            $path = $request->file('screenshot')->store('screenshots', $disk);
+            
+            if ($disk === 'supabase') {
+                $screenshotPath = Storage::disk('supabase')->url($path);
+            } else {
+                $screenshotPath = $path;
+            }
         }
 
         $challengeChecklist = [];
