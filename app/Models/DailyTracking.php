@@ -30,4 +30,23 @@ class DailyTracking extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function getScreenshotUrlAttribute()
+    {
+        if (!$this->screenshot_path) {
+            return null;
+        }
+
+        $path = $this->screenshot_path;
+
+        if (str_starts_with($path, 'http')) {
+            if (str_contains($path, '/storage/v1/s3/')) {
+                $bucket = env('SUPABASE_STORAGE_BUCKET', 'screenshots');
+                $path = str_replace('/storage/v1/s3/', '/storage/v1/object/public/' . $bucket . '/', $path);
+            }
+            return $path;
+        }
+
+        return asset('storage/' . $path);
+    }
 }

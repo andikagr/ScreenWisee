@@ -81,4 +81,23 @@ class User extends Authenticatable
     {
         return $this->hasMany(DailyTracking::class);
     }
+
+    public function getProfilePhotoUrlAttribute()
+    {
+        if (!$this->profile_photo_path) {
+            return null;
+        }
+
+        $path = $this->profile_photo_path;
+
+        if (str_starts_with($path, 'http')) {
+            if (str_contains($path, '/storage/v1/s3/')) {
+                $bucket = env('SUPABASE_STORAGE_BUCKET', 'profiles');
+                $path = str_replace('/storage/v1/s3/', '/storage/v1/object/public/' . $bucket . '/', $path);
+            }
+            return $path;
+        }
+
+        return asset('storage/' . $path);
+    }
 }

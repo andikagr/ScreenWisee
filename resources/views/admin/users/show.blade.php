@@ -52,7 +52,7 @@
                         <td><strong style="color:var(--dark-800)">{{ $t->tracking_date->format('d M Y') }}</strong></td>
                         <td><span class="badge {{ $t->screen_time_hours <= 3 ? 'badge-green' : ($t->screen_time_hours <= 6 ? 'badge-yellow' : 'badge-red') }}">{{ $t->screen_time_hours }} jam</span></td>
                         <td>@if($t->activities) <div style="display:flex;flex-wrap:wrap;gap:4px"> @foreach($t->activities as $k=>$v)@if($v>0)<span class="badge" style="background:var(--dark-100);color:var(--dark-800)">{{ ucfirst($k) }}:{{ $v }}j</span>@endif @endforeach </div> @else - @endif</td>
-                        <td>@if($t->screenshot_path)<a href="{{ Str::startsWith($t->screenshot_path, 'http') ? $t->screenshot_path : asset('storage/'.$t->screenshot_path) }}" target="_blank" class="btn btn-sm bounce-anim" style="background:var(--accent-pink-dark);color:white;border:none">📷 Lihat</a>@else - @endif</td>
+                        <td>@if($t->screenshot_path)<a href="{{ $t->screenshot_url }}" target="_blank" class="btn btn-sm bounce-anim" style="background:var(--accent-pink-dark);color:white;border:none">📷 Lihat</a>@else - @endif</td>
                     </tr>
                     @endforeach
                 </tbody>
