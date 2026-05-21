@@ -46,11 +46,22 @@ class DashboardController extends Controller
             })
             ->count();
 
+        // === GLOBAL LEADERBOARD ===
+        $cacheKey = 'leaderboard_global';
+        $leaderboard = cache()->remember($cacheKey, now()->addMinutes(10), function () {
+            return User::where('role', 'siswa')
+                ->withAvg('dailyTrackings as avg_screen_time', 'screen_time_hours')
+                ->having('avg_screen_time', '>', 0)
+                ->orderBy('avg_screen_time', 'asc')
+                ->limit(10)
+                ->get();
+        });
+
         return view('admin.dashboard', compact(
             'totalUsers', 'totalSiswa', 'totalGuru', 'totalChallenges',
             'trackingsToday', 'overallAvgScreenTime',
             'avgPreScreenTime', 'avgPostScreenTime',
-            'weeklyData', 'siswaNotTrackedToday'
+            'weeklyData', 'siswaNotTrackedToday', 'leaderboard'
         ));
     }
 }

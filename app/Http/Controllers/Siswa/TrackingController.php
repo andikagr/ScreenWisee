@@ -8,6 +8,7 @@ use App\Models\DailyTracking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 
 class TrackingController extends Controller
@@ -110,6 +111,9 @@ class TrackingController extends Controller
                 'screenshot_path' => $screenshotPath,
             ]
         );
+
+        // Hapus cache leaderboard agar langsung update
+        Cache::forget('leaderboard_guru_' . $user->guru_id);
 
         return redirect()->route('siswa.dashboard')->with('success', 'Tracking harian berhasil disimpan! 🎉');
     }

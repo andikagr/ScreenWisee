@@ -77,7 +77,6 @@ class DashboardController extends Controller
             ];
         })->values();
 
-        // Recent screenshots
         $recentScreenshots = DailyTracking::whereIn('user_id', $siswaIds)
             ->whereNotNull('screenshot_path')
             ->with('user')
@@ -85,9 +84,21 @@ class DashboardController extends Controller
             ->limit(8)
             ->get();
 
+        // === LEADERBOARD ===
+        $cacheKey = 'leaderboard_guru_' . $guru->id;
+        $leaderboard = cache()->remember($cacheKey, now()->addMinutes(10), function () use ($guru) {
+            return User::where('role', 'siswa')
+                ->where('guru_id', $guru->id)
+                ->withAvg('dailyTrackings as avg_screen_time', 'screen_time_hours')
+                ->having('avg_screen_time', '>', 0)
+                ->orderBy('avg_screen_time', 'asc')
+                ->limit(5)
+                ->get();
+        });
+
         return view('guru.dashboard', compact(
             'siswaStats', 'totalSiswa', 'siswaTrackingToday', 'overallAvgScreenTime',
-            'weeklyData', 'kelasStats', 'recentScreenshots'
+            'weeklyData', 'kelasStats', 'recentScreenshots', 'leaderboard'
         ));
     }
 

@@ -49,6 +49,37 @@
         </div>
     </div>
 </div>
+</div>
+@endif
+
+{{-- Leaderboard --}}
+@if(isset($leaderboard) && $leaderboard->count() > 0)
+<div class="card fade-up" style="margin-bottom:32px; border:3px solid var(--accent-purple); border-radius:24px">
+    <div class="card-header" style="background:var(--primary-50); border-bottom:none">
+        <h3 style="color:var(--primary-700); font-size:18px; display:flex; align-items:center; gap:8px;">
+            <i data-lucide="trophy" style="width:20px;height:20px;color:var(--accent-purple-dark)"></i> Top 5 Screen Time Terendah (Siswa Bimbinganmu)
+        </h3>
+    </div>
+    <div class="card-body" style="padding:16px">
+        <div style="display:flex; flex-direction:column; gap:12px;">
+            @foreach($leaderboard as $index => $student)
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-radius:16px; background:white; border:2px solid var(--dark-100);">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <div style="width:32px; height:32px; border-radius:50%; background:{{ $index === 0 ? '#fbbf24' : ($index === 1 ? '#94a3b8' : ($index === 2 ? '#b45309' : 'var(--dark-200)')) }}; color:white; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:14px;">
+                            {{ $index + 1 }}
+                        </div>
+                        <div style="font-weight:800; color:var(--dark-800); font-size:15px">
+                            {{ $student->name }}
+                        </div>
+                    </div>
+                    <div style="font-weight:900; color:var(--primary-600); font-size:15px">
+                        {{ number_format($student->avg_screen_time, 1) }} jam
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+</div>
 @endif
 
 {{-- Student Table with Search/Filter --}}

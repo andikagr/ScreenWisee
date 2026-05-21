@@ -113,31 +113,13 @@ class DashboardController extends Controller
             $notifications[] = ['type' => 'success', 'msg' => '🔥 Streak ' . $streak . ' hari! Pertahankan kebiasaan baikmu!'];
         }
 
-        // === LEADERBOARD (Ranking Screen Time Terendah) ===
-        // Cari teman-teman sekelas (satu guru)
-        $peerStudents = User::where('role', 'siswa')
-            ->where('guru_id', $user->guru_id)
-            ->withAvg('dailyTrackings as avg_screen_time', 'screen_time_hours')
-            ->having('avg_screen_time', '>', 0) // Hanya yang sudah pernah isi jurnal
-            ->orderBy('avg_screen_time', 'asc')
-            ->get();
-
-        $leaderboard = $peerStudents->take(5); // Ambil top 5
-        
-        // Cari ranking user saat ini
-        $userRank = $peerStudents->search(function ($student) use ($user) {
-            return $student->id === $user->id;
-        });
-        $userRank = $userRank !== false ? $userRank + 1 : null;
-
         // === ONBOARDING ===
         $showOnboarding = ($totalTrackings === 0 && !$hasPretest);
 
         return view('siswa.dashboard', compact(
             'user', 'todayChallenge', 'todayTracking', 'weeklyTrackings',
             'totalTrackings', 'avgScreenTime', 'hasPretest', 'hasPosttest', 'challenges',
-            'streak', 'points', 'badges', 'notifications', 'showOnboarding', 'programDay',
-            'leaderboard', 'userRank'
+            'streak', 'points', 'badges', 'notifications', 'showOnboarding', 'programDay'
         ));
     }
 }
