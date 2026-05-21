@@ -90,7 +90,7 @@ class DashboardController extends Controller
             return User::where('role', 'siswa')
                 ->where('guru_id', $guru->id)
                 ->withAvg('dailyTrackings as avg_screen_time', 'screen_time_hours')
-                ->having('avg_screen_time', '>', 0)
+                ->has('dailyTrackings')
                 ->orderBy('avg_screen_time', 'asc')
                 ->limit(5)
                 ->get();

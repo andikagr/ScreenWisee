@@ -51,7 +51,7 @@ class DashboardController extends Controller
         $leaderboard = cache()->remember($cacheKey, now()->addMinutes(10), function () {
             return User::where('role', 'siswa')
                 ->withAvg('dailyTrackings as avg_screen_time', 'screen_time_hours')
-                ->having('avg_screen_time', '>', 0)
+                ->has('dailyTrackings')
                 ->orderBy('avg_screen_time', 'asc')
                 ->limit(10)
                 ->get();
