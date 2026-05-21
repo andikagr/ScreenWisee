@@ -74,10 +74,14 @@ class TrackingController extends Controller
             $disk = env('FILESYSTEM_DISK', 'public');
             $path = $request->file('screenshot')->store('screenshots', $disk);
             
-            if ($disk === 'supabase') {
-                $screenshotPath = Storage::disk('supabase')->url($path);
+            if ($path) {
+                if ($disk === 'supabase') {
+                    $screenshotPath = Storage::disk('supabase')->url($path);
+                } else {
+                    $screenshotPath = $path;
+                }
             } else {
-                $screenshotPath = $path;
+                return back()->withInput()->withErrors(['screenshot' => 'Gagal mengunggah foto. Pastikan bucket Supabase sudah dibuat dan namanya sesuai.']);
             }
         }
 

@@ -36,6 +36,7 @@
     <div class="card-body">
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px">
             @foreach($recentScreenshots as $ss)
+            @if($ss->screenshot_url)
             <div style="border:3px solid var(--dark-100);border-radius:24px;overflow:hidden;transition:all .3s;background:white" class="screenshot-card">
                 <a href="{{ $ss->screenshot_url }}" target="_blank">
                     <img src="{{ $ss->screenshot_url }}" alt="Screenshot" style="width:100%;height:140px;object-fit:cover;border-bottom:3px solid var(--dark-100)">
@@ -45,6 +46,7 @@
                     <div style="font-size:12px;color:var(--dark-500);font-weight:700">{{ $ss->tracking_date->format('d M Y') }} · {{ $ss->screen_time_hours }}j</div>
                 </div>
             </div>
+            @endif
             @endforeach
         </div>
     </div>

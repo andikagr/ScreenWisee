@@ -32,11 +32,15 @@ class ProfileController extends Controller
 
             $path = $request->file('profile_photo')->store('profiles', $disk);
             
-            // Generate public URL jika menggunakan supabase
-            if ($disk === 'supabase') {
-                $user->profile_photo_path = Storage::disk('supabase')->url($path);
+            if ($path) {
+                // Generate public URL jika menggunakan supabase
+                if ($disk === 'supabase') {
+                    $user->profile_photo_path = Storage::disk('supabase')->url($path);
+                } else {
+                    $user->profile_photo_path = $path;
+                }
             } else {
-                $user->profile_photo_path = $path;
+                return back()->withInput()->withErrors(['profile_photo' => 'Gagal mengunggah foto. Pastikan bucket Supabase sudah dibuat dan namanya sesuai.']);
             }
             
             $user->save();

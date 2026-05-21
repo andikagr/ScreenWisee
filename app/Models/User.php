@@ -88,7 +88,12 @@ class User extends Authenticatable
             return null;
         }
 
-        $path = $this->profile_photo_path;
+        $path = trim($this->profile_photo_path);
+
+        // Jika path berupa base URL S3 saja (tanpa nama file), berarti upload sebelumnya gagal
+        if (str_ends_with($path, '/')) {
+            return null;
+        }
 
         if (str_starts_with($path, 'http')) {
             if (str_contains($path, '/storage/v1/s3/')) {
