@@ -41,7 +41,7 @@ class DailyTracking extends Model
 
         if (str_starts_with($path, 'http')) {
             if (str_contains($path, '/storage/v1/s3/')) {
-                $bucket = env('SUPABASE_STORAGE_BUCKET', 'screenshots');
+                $bucket = env('SUPABASE_STORAGE_BUCKET', 'profiles');
                 $path = str_replace('/storage/v1/s3/', '/storage/v1/object/public/' . $bucket . '/', $path);
             }
             return $path;
