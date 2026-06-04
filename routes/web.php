@@ -98,23 +98,56 @@ Route::get('/seed-dummy-data', function () {
 
         $count = 0;
         $allTrackings = [];
+        $allPretests = [];
+        $allPosttests = [];
+
+        // Hapus data lama agar tidak tumpang tindih (Bulk Delete)
+        App\Models\Pretest::truncate();
+        App\Models\Posttest::truncate();
+        App\Models\DailyTracking::truncate();
 
         foreach ($siswas as $siswa) {
-            // Hapus data tracking lama untuk siswa ini
-            App\Models\DailyTracking::where('user_id', $siswa->id)->delete();
+            // --- GENERATE PRETEST (Kondisi Awal - Lebih Buruk) ---
+            $preScreenTime = rand(60, 120) / 10; // 6.0 - 12.0 jam
+            $allPretests[] = [
+                'user_id' => $siswa->id,
+                'avg_screen_time' => $preScreenTime,
+                'sleep_time' => sprintf('%02d:00', rand(23, 25) % 24), // 23:00, 00:00, 01:00
+                'wake_time' => sprintf('%02d:30', rand(5, 7)),
+                'gadget_habits' => json_encode(['Bermain game sebelum tidur', 'Makan sambil main HP']),
+                'notes' => 'Sering begadang dan kurang tidur',
+                'created_at' => now()->subDays(8),
+                'updated_at' => now()->subDays(8),
+            ];
+
+            // --- GENERATE POSTTEST (Kondisi Akhir - Lebih Baik) ---
+            $postScreenTime = rand(20, 50) / 10; // 2.0 - 5.0 jam
+            $allPosttests[] = [
+                'user_id' => $siswa->id,
+                'avg_screen_time' => $postScreenTime,
+                'sleep_time' => sprintf('%02d:00', rand(21, 22)), // 21:00, 22:00
+                'wake_time' => sprintf('%02d:00', rand(5, 6)),
+                'gadget_habits' => json_encode(['Tidak bawa HP ke kasur']),
+                'notes' => 'Lebih segar dan bisa tidur cepat',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
 
             // Buat 7 hari tracking ke belakang
             for ($i = 6; $i >= 0; $i--) {
                 $date = \Carbon\Carbon::today()->subDays($i);
                 
-                // Variasi screen time (2.0 - 8.5 jam)
-                $screenTime = rand(20, 85) / 10;
+                // Variasi screen time tracking (gradual improvement)
+                // Hari ke-6 (paling lama) screen time tinggi, hari ke-0 (hari ini) screen time rendah
+                $trackingScreenTime = $preScreenTime - (($preScreenTime - $postScreenTime) / 6 * (6 - $i));
+                $trackingScreenTime = round($trackingScreenTime + (rand(-5, 5) / 10), 1); // tambah sedikit noise
+                if ($trackingScreenTime < 0) $trackingScreenTime = 0;
                 
                 // Pembagian aktivitas
-                $sosmed = round($screenTime * (rand(30, 50) / 100), 1);
-                $game = round($screenTime * (rand(20, 40) / 100), 1);
-                $belajar = round($screenTime * (rand(10, 30) / 100), 1);
-                $lainnya = round($screenTime - ($sosmed + $game + $belajar), 1);
+                $sosmed = round($trackingScreenTime * (rand(30, 50) / 100), 1);
+                $game = round($trackingScreenTime * (rand(20, 40) / 100), 1);
+                $belajar = round($trackingScreenTime * (rand(10, 30) / 100), 1);
+                $lainnya = round($trackingScreenTime - ($sosmed + $game + $belajar), 1);
                 if ($lainnya < 0) $lainnya = 0;
 
                 // Challenge (pilih 1 challenge random)
@@ -124,7 +157,7 @@ Route::get('/seed-dummy-data', function () {
                 $allTrackings[] = [
                     'user_id' => $siswa->id,
                     'tracking_date' => $date->format('Y-m-d'),
-                    'screen_time_hours' => $screenTime,
+                    'screen_time_hours' => $trackingScreenTime,
                     'activities' => json_encode([
                         'sosmed' => $sosmed,
                         'game' => $game,
@@ -133,8 +166,8 @@ Route::get('/seed-dummy-data', function () {
                     ]),
                     'challenge_checklist' => json_encode($checklist),
                     'screenshot_path' => null,
-                    'created_at' => now(),
-                    'updated_at' => now(),
+                    'created_at' => now()->subDays($i),
+                    'updated_at' => now()->subDays($i),
                 ];
             }
             
@@ -144,13 +177,13 @@ Route::get('/seed-dummy-data', function () {
         }
 
         // Lakukan Bulk Insert
-        if (!empty($allTrackings)) {
-            App\Models\DailyTracking::insert($allTrackings);
-        }
+        if (!empty($allPretests)) App\Models\Pretest::insert($allPretests);
+        if (!empty($allPosttests)) App\Models\Posttest::insert($allPosttests);
+        if (!empty($allTrackings)) App\Models\DailyTracking::insert($allTrackings);
         
         \Illuminate\Support\Facades\Cache::forget('leaderboard_global');
 
-        return "<h1>✅ SUKSES!</h1><p>Berhasil mengisi jurnal 7 hari terakhir untuk $count siswa dengan screen time yang bervariasi.</p>";
+        return "<h1>✅ SUKSES!</h1><p>Berhasil mengisi Pre-test, Post-test, dan jurnal 7 hari terakhir untuk $count siswa secara fantastis dan sangat bervariasi.</p>";
     } catch (\Exception $e) {
         return '<h1>❌ GAGAL!</h1><pre>' . $e->getMessage() . '</pre>';
     }
