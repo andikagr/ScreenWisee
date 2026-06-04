@@ -97,6 +97,8 @@ Route::get('/seed-dummy-data', function () {
         }
 
         $count = 0;
+        $allTrackings = [];
+
         foreach ($siswas as $siswa) {
             // Hapus data tracking lama untuk siswa ini
             App\Models\DailyTracking::where('user_id', $siswa->id)->delete();
@@ -119,24 +121,31 @@ Route::get('/seed-dummy-data', function () {
                 $randomChallenge = $challenges->random();
                 $checklist = [$randomChallenge->id => true];
 
-                App\Models\DailyTracking::create([
+                $allTrackings[] = [
                     'user_id' => $siswa->id,
-                    'tracking_date' => $date,
+                    'tracking_date' => $date->format('Y-m-d'),
                     'screen_time_hours' => $screenTime,
-                    'activities' => [
+                    'activities' => json_encode([
                         'sosmed' => $sosmed,
                         'game' => $game,
                         'belajar' => $belajar,
                         'lainnya' => $lainnya,
-                    ],
-                    'challenge_checklist' => $checklist,
-                    'screenshot_path' => null
-                ]);
+                    ]),
+                    'challenge_checklist' => json_encode($checklist),
+                    'screenshot_path' => null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
             }
             
             // Hapus cache leaderboard
             \Illuminate\Support\Facades\Cache::forget('leaderboard_guru_' . $siswa->guru_id);
             $count++;
+        }
+
+        // Lakukan Bulk Insert
+        if (!empty($allTrackings)) {
+            App\Models\DailyTracking::insert($allTrackings);
         }
         
         \Illuminate\Support\Facades\Cache::forget('leaderboard_global');
