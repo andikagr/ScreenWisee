@@ -83,3 +83,66 @@ Route::get('/migrate-db-sekarang', function () {
         return '<h1>❌ MIGRATION GAGAL!</h1><pre>' . $e->getMessage() . '</pre>';
     }
 });
+
+Route::get('/seed-dummy-data', function () {
+    try {
+        $siswas = App\Models\User::where('role', 'siswa')->get();
+        if ($siswas->isEmpty()) {
+            return '<h1>❌ Tidak ada data siswa di database!</h1>';
+        }
+
+        $challenges = App\Models\Challenge::all();
+        if ($challenges->isEmpty()) {
+            return '<h1>❌ Tidak ada data challenge di database! Silakan buat challenge dulu dari menu admin.</h1>';
+        }
+
+        $count = 0;
+        foreach ($siswas as $siswa) {
+            // Hapus data tracking lama untuk siswa ini
+            App\Models\DailyTracking::where('user_id', $siswa->id)->delete();
+
+            // Buat 7 hari tracking ke belakang
+            for ($i = 6; $i >= 0; $i--) {
+                $date = \Carbon\Carbon::today()->subDays($i);
+                
+                // Variasi screen time (2.0 - 8.5 jam)
+                $screenTime = rand(20, 85) / 10;
+                
+                // Pembagian aktivitas
+                $sosmed = round($screenTime * (rand(30, 50) / 100), 1);
+                $game = round($screenTime * (rand(20, 40) / 100), 1);
+                $belajar = round($screenTime * (rand(10, 30) / 100), 1);
+                $lainnya = round($screenTime - ($sosmed + $game + $belajar), 1);
+                if ($lainnya < 0) $lainnya = 0;
+
+                // Challenge (pilih 1 challenge random)
+                $randomChallenge = $challenges->random();
+                $checklist = [$randomChallenge->id => true];
+
+                App\Models\DailyTracking::create([
+                    'user_id' => $siswa->id,
+                    'tracking_date' => $date,
+                    'screen_time_hours' => $screenTime,
+                    'activities' => [
+                        'sosmed' => $sosmed,
+                        'game' => $game,
+                        'belajar' => $belajar,
+                        'lainnya' => $lainnya,
+                    ],
+                    'challenge_checklist' => $checklist,
+                    'screenshot_path' => null
+                ]);
+            }
+            
+            // Hapus cache leaderboard
+            \Illuminate\Support\Facades\Cache::forget('leaderboard_guru_' . $siswa->guru_id);
+            $count++;
+        }
+        
+        \Illuminate\Support\Facades\Cache::forget('leaderboard_global');
+
+        return "<h1>✅ SUKSES!</h1><p>Berhasil mengisi jurnal 7 hari terakhir untuk $count siswa dengan screen time yang bervariasi.</p>";
+    } catch (\Exception $e) {
+        return '<h1>❌ GAGAL!</h1><pre>' . $e->getMessage() . '</pre>';
+    }
+});
