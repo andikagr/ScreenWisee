@@ -133,8 +133,24 @@ Route::get('/seed-dummy-data', function () {
                 'updated_at' => now(),
             ];
 
-            // Tentukan hari mana saja yang akan di-skip agar tidak streak 7 hari
-            $daysToSkip = rand(1, 3);
+            // Tentukan "Persona" siswa secara acak untuk variasi yang realistis
+            // 1 = Rajin, 2 = Biasa, 3 = Malas
+            $persona = rand(1, 3);
+            
+            if ($persona === 1) { // Rajin
+                $daysToSkip = rand(0, 1);
+                $challengeProb = 90; // 90% ngerjain challenge
+                $improvementRate = 1.0; // Perbaikan bagus
+            } elseif ($persona === 2) { // Biasa
+                $daysToSkip = rand(2, 4);
+                $challengeProb = 50; // 50% ngerjain challenge
+                $improvementRate = 0.5; // Perbaikan setengah-setengah
+            } else { // Malas
+                $daysToSkip = rand(4, 6);
+                $challengeProb = 20; // Cuma 20% kemungkinan ngerjain challenge
+                $improvementRate = 0.1; // Hampir ga ada perbaikan
+            }
+
             $skippedDays = [];
             while(count($skippedDays) < $daysToSkip) {
                 $randDay = rand(0, 6);
@@ -146,27 +162,29 @@ Route::get('/seed-dummy-data', function () {
             // Buat 7 hari tracking ke belakang
             for ($i = 6; $i >= 0; $i--) {
                 if (in_array($i, $skippedDays)) {
-                    continue; // Skip hari ini agar streak terputus
+                    continue; // Skip hari ini agar streak terputus dan kerjanya dikit
                 }
 
                 $date = \Carbon\Carbon::today()->subDays($i);
                 
-                // Variasi screen time tracking (gradual improvement)
-                // Hari ke-6 (paling lama) screen time tinggi, hari ke-0 (hari ini) screen time rendah
-                $trackingScreenTime = $preScreenTime - (($preScreenTime - $postScreenTime) / 6 * (6 - $i));
-                $trackingScreenTime = round($trackingScreenTime + (rand(-5, 5) / 10), 1); // tambah sedikit noise
+                // Variasi screen time tracking (berdasarkan persona)
+                $expectedScreenTime = $preScreenTime - (($preScreenTime - $postScreenTime) / 6 * (6 - $i) * $improvementRate);
+                $trackingScreenTime = round($expectedScreenTime + (rand(-10, 10) / 10), 1); // noise lebih besar
                 if ($trackingScreenTime < 0) $trackingScreenTime = 0;
                 
                 // Pembagian aktivitas
-                $sosmed = round($trackingScreenTime * (rand(30, 50) / 100), 1);
-                $game = round($trackingScreenTime * (rand(20, 40) / 100), 1);
-                $belajar = round($trackingScreenTime * (rand(10, 30) / 100), 1);
+                $sosmed = round($trackingScreenTime * (rand(30, 60) / 100), 1);
+                $game = round($trackingScreenTime * (rand(20, 50) / 100), 1);
+                $belajar = round($trackingScreenTime * (rand(0, 20) / 100), 1); // belajar dikit
                 $lainnya = round($trackingScreenTime - ($sosmed + $game + $belajar), 1);
                 if ($lainnya < 0) $lainnya = 0;
 
-                // Challenge (pilih 1 challenge random)
-                $randomChallenge = $challenges->random();
-                $checklist = [$randomChallenge->id => true];
+                // Challenge (berdasarkan probabilitas persona)
+                $checklist = [];
+                if (rand(1, 100) <= $challengeProb) {
+                    $randomChallenge = $challenges->random();
+                    $checklist = [$randomChallenge->id => true];
+                }
 
                 $allTrackings[] = [
                     'user_id' => $siswa->id,
