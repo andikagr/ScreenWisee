@@ -133,55 +133,38 @@ Route::get('/seed-dummy-data', function () {
                 'updated_at' => now(),
             ];
 
-            // Tentukan "Persona" siswa secara acak untuk variasi yang realistis
-            // 1 = Rajin, 2 = Biasa, 3 = Malas, 4 = Tidak mengerjakan sama sekali
-            $persona = rand(1, 4);
-            
-            if ($persona === 1) { // Rajin
-                $daysToSkip = rand(0, 1);
-                $challengeProb = 90;
-                $improvementRate = 1.0;
-            } elseif ($persona === 2) { // Biasa
-                $daysToSkip = rand(2, 4);
-                $challengeProb = 50;
-                $improvementRate = 0.5;
-            } elseif ($persona === 3) { // Malas
-                $daysToSkip = rand(4, 6);
-                $challengeProb = 20;
-                $improvementRate = 0.1;
-            } else { // Tidak mengerjakan sama sekali - skip semua hari
-                continue; // Langsung loncat ke siswa berikutnya, tidak ada tracking
+            // Acak murni berapa hari siswa mengerjakan (0-7 hari)
+            $totalDays = rand(0, 7);
+
+            if ($totalDays === 0) {
+                // Siswa ini tidak mengerjakan apapun, lewati
+                \Illuminate\Support\Facades\Cache::forget('leaderboard_guru_' . $siswa->guru_id);
+                $count++;
+                continue;
             }
 
-            $skippedDays = [];
-            while(count($skippedDays) < $daysToSkip) {
-                $randDay = rand(0, 6);
-                if (!in_array($randDay, $skippedDays)) {
-                    $skippedDays[] = $randDay;
-                }
-            }
+            // Pilih $totalDays hari secara acak dari rentang 7 hari terakhir (0=hari ini, 6=6 hari lalu)
+            $possibleDays = range(0, 6);
+            shuffle($possibleDays);
+            $activeDays = array_slice($possibleDays, 0, $totalDays);
 
-            // Buat 7 hari tracking ke belakang
-            for ($i = 6; $i >= 0; $i--) {
-                if (in_array($i, $skippedDays)) {
-                    continue; // Skip hari ini agar streak terputus dan kerjanya dikit
-                }
+            // Semakin sedikit hari, semakin kecil kemungkinan ngerjain challenge
+            $challengeProb = min(90, $totalDays * 15); // 0 hari=0%, 7 hari=~90%
 
+            foreach ($activeDays as $i) {
                 $date = \Carbon\Carbon::today()->subDays($i);
-                
-                // Variasi screen time tracking (berdasarkan persona)
-                $expectedScreenTime = $preScreenTime - (($preScreenTime - $postScreenTime) / 6 * (6 - $i) * $improvementRate);
-                $trackingScreenTime = round($expectedScreenTime + (rand(-10, 10) / 10), 1); // noise lebih besar
-                if ($trackingScreenTime < 0) $trackingScreenTime = 0;
-                
+
+                // Screen time acak bervariasi
+                $trackingScreenTime = round(rand(15, 110) / 10, 1); // 1.5 - 11.0 jam
+
                 // Pembagian aktivitas
                 $sosmed = round($trackingScreenTime * (rand(30, 60) / 100), 1);
-                $game = round($trackingScreenTime * (rand(20, 50) / 100), 1);
-                $belajar = round($trackingScreenTime * (rand(0, 20) / 100), 1); // belajar dikit
+                $game  = round($trackingScreenTime * (rand(20, 50) / 100), 1);
+                $belajar = round($trackingScreenTime * (rand(0, 20) / 100), 1);
                 $lainnya = round($trackingScreenTime - ($sosmed + $game + $belajar), 1);
                 if ($lainnya < 0) $lainnya = 0;
 
-                // Challenge (berdasarkan probabilitas persona)
+                // Challenge
                 $checklist = [];
                 if (rand(1, 100) <= $challengeProb) {
                     $randomChallenge = $challenges->random();
@@ -189,19 +172,19 @@ Route::get('/seed-dummy-data', function () {
                 }
 
                 $allTrackings[] = [
-                    'user_id' => $siswa->id,
-                    'tracking_date' => $date->format('Y-m-d'),
-                    'screen_time_hours' => $trackingScreenTime,
-                    'activities' => json_encode([
-                        'sosmed' => $sosmed,
-                        'game' => $game,
+                    'user_id'            => $siswa->id,
+                    'tracking_date'      => $date->format('Y-m-d'),
+                    'screen_time_hours'  => $trackingScreenTime,
+                    'activities'         => json_encode([
+                        'sosmed'  => $sosmed,
+                        'game'    => $game,
                         'belajar' => $belajar,
                         'lainnya' => $lainnya,
                     ]),
                     'challenge_checklist' => json_encode($checklist),
-                    'screenshot_path' => null,
-                    'created_at' => now()->subDays($i),
-                    'updated_at' => now()->subDays($i),
+                    'screenshot_path'    => null,
+                    'created_at'         => now()->subDays($i),
+                    'updated_at'         => now()->subDays($i),
                 ];
             }
             
