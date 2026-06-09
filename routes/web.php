@@ -133,8 +133,22 @@ Route::get('/seed-dummy-data', function () {
                 'updated_at' => now(),
             ];
 
+            // Tentukan hari mana saja yang akan di-skip agar tidak streak 7 hari
+            $daysToSkip = rand(1, 3);
+            $skippedDays = [];
+            while(count($skippedDays) < $daysToSkip) {
+                $randDay = rand(0, 6);
+                if (!in_array($randDay, $skippedDays)) {
+                    $skippedDays[] = $randDay;
+                }
+            }
+
             // Buat 7 hari tracking ke belakang
             for ($i = 6; $i >= 0; $i--) {
+                if (in_array($i, $skippedDays)) {
+                    continue; // Skip hari ini agar streak terputus
+                }
+
                 $date = \Carbon\Carbon::today()->subDays($i);
                 
                 // Variasi screen time tracking (gradual improvement)
