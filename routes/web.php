@@ -134,21 +134,23 @@ Route::get('/seed-dummy-data', function () {
             ];
 
             // Tentukan "Persona" siswa secara acak untuk variasi yang realistis
-            // 1 = Rajin, 2 = Biasa, 3 = Malas
-            $persona = rand(1, 3);
+            // 1 = Rajin, 2 = Biasa, 3 = Malas, 4 = Tidak mengerjakan sama sekali
+            $persona = rand(1, 4);
             
             if ($persona === 1) { // Rajin
                 $daysToSkip = rand(0, 1);
-                $challengeProb = 90; // 90% ngerjain challenge
-                $improvementRate = 1.0; // Perbaikan bagus
+                $challengeProb = 90;
+                $improvementRate = 1.0;
             } elseif ($persona === 2) { // Biasa
                 $daysToSkip = rand(2, 4);
-                $challengeProb = 50; // 50% ngerjain challenge
-                $improvementRate = 0.5; // Perbaikan setengah-setengah
-            } else { // Malas
+                $challengeProb = 50;
+                $improvementRate = 0.5;
+            } elseif ($persona === 3) { // Malas
                 $daysToSkip = rand(4, 6);
-                $challengeProb = 20; // Cuma 20% kemungkinan ngerjain challenge
-                $improvementRate = 0.1; // Hampir ga ada perbaikan
+                $challengeProb = 20;
+                $improvementRate = 0.1;
+            } else { // Tidak mengerjakan sama sekali - skip semua hari
+                continue; // Langsung loncat ke siswa berikutnya, tidak ada tracking
             }
 
             $skippedDays = [];
